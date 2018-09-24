@@ -7,6 +7,7 @@ from datetime import datetime
 from api_token import token
 
 import requests
+from tqdm import trange
 
 
 def write_dicts_to_csv(filename, dictionaries):
@@ -24,9 +25,8 @@ def get_access_logs():
     url = 'https://slack.com/api/team.accessLogs'
     params = {'token': token, 'count': 1000}  # 1000 logs per page is maximum
 
-    print('Downloading pages', end=' ')
-    for page in range(1, 101):  # 100 pages is maximum
-        print('.', end='', flush=True)
+    print(' Downloading pages …')
+    for page in trange(1, 101):  # 100 pages is maximum
         params['page'] = page
         res = requests.get(url, params=params)
         res_data = res.json()
