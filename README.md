@@ -16,7 +16,7 @@ A really simple script to obtain all available access logs from your Slack works
 ## Requirements
 
 * Python >= 3.6
-* requests (`pip install requests`)
+* requests, tqdm (`pip install -r requirements.txt`)
 * Slack API token
   * [Token generator page](https://api.slack.com/custom-integrations/legacy-tokens)
   * Place your token to `api_token.py.tpl` and rename the file `api_token.py.tpl` → `api_token.py`
