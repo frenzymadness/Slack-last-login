@@ -73,10 +73,42 @@ def get_last_logins(access_logs):
     return user_dicts
 
 
+def get_all_members():
+    url = 'https://slack.com/api/users.list'
+    params = {'token': token}  # 1000 logs per page is maximum
+
+    print(' Downloading members …')
+    res = requests.get(url, params=params)
+    res_data = res.json()
+
+    if not res_data['ok']:
+        raise ValueError(f'Something went wrong.'
+                            'URL: {res.url}'
+                            'Error: {res_data["error"]}')
+
+    return res_data["members"]
+
+
+def add_missing_members(last_logins, all_members):
+    """Extends info about last logins with members missing in access logs"""
+    existing_ids = [user["user_id"] for user in last_logins]
+
+    for member in all_members:
+        if member["id"] in existing_ids:
+            continue
+        last_logins.append({
+            'user_id': member["id"],
+            'user_name': member["name"],
+            'last_login': "Not available",
+            'inactive_days': "Not available"})
+
+
 def main():
     access_logs = get_access_logs()
     write_dicts_to_csv('raw_data.csv', access_logs)
     last_logins = get_last_logins(access_logs)
+    members = get_all_members()
+    add_missing_members(last_logins, members)
     write_dicts_to_csv('last_logins.csv', last_logins)
 
 
